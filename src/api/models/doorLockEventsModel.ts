@@ -1,9 +1,9 @@
 import { Mongoose, Schema, model, Model, Document } from 'mongoose';
 
 const eventSchema = new Schema({
-	id: {
+	user: {
 		type: String,
-		default: 'Bottom'
+		default: 'Api'
 	},
 	dateTime: {
 		type: Date,
@@ -16,4 +16,4 @@ eventSchema.path('dateTime').set(function (value) {
 	return new Date(value);
 });
 
-export const DoorbellEventModel: Model<Document> = model('DoorbellEvent', eventSchema);
+export const DoorLockEventModel: Model<Document> = model('DoorLockEvent', eventSchema);

@@ -1,9 +1,9 @@
 import { model } from 'mongoose';
-import { DoorbellEventModel } from '../models/doorBellEventsModel';
 import { isNullOrUndefined } from 'util';
+import { DoorLockEventModel } from '../models/doorLockEventsModel';
 
 export const listAllEvents = (req, res) => {
-	DoorbellEventModel.find({}).lean().exec((err, events) => {
+	DoorLockEventModel.find({}).lean().exec((err, events) => {
 		if (!isNullOrUndefined(err)) {
 			res.send(err);
 		} else {
@@ -14,7 +14,7 @@ export const listAllEvents = (req, res) => {
 }
 
 export const addEvent = (req, res) => {
-	var new_event = new DoorbellEventModel(req.body);
+	var new_event = new DoorLockEventModel(req.body);
 	new_event.save((err, event) => {
 		if (!isNullOrUndefined(err)) {
 			res.send(err);
@@ -25,7 +25,7 @@ export const addEvent = (req, res) => {
 }
 
 export const removeAllEvents = (req, res) => {
-	DoorbellEventModel.deleteMany({}, (err) => {
+	DoorLockEventModel.deleteMany({}, (err) => {
 		if (!isNullOrUndefined(err)) {
 			res.send(err);
 		} else {
