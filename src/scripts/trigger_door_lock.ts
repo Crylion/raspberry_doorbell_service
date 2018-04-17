@@ -10,7 +10,7 @@ export const triggerLockRelais = (duration: number = 2000) => {
 	setTimeout(() => {
 		console.log('Turning of relais again');
 		lock_relais.writeSync(0);
-	}, 2000);
+	}, duration);
 
 	lock_relais.unexport();
 
