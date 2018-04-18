@@ -1,24 +1,21 @@
 import { Observable } from 'rxjs/Rx';
-import { Gpio } from 'onoff';
+import { Gpio } from 'pigpio';
 import axios from 'axios';
 import { isNullOrUndefined } from 'util';
 
+const PIN_DOORBELL_RELAIS: number = 17;
+const lock_relais = new Gpio(PIN_DOORBELL_RELAIS, {
+	mode: Gpio.OUTPUT,
+	pullUpDown: Gpio.PUD_UP
+});
+
 export const triggerLockRelais = (duration: number = 2000) => {
-	const lock_relais = new Gpio(17, 'out');
-
-	lock_relais.writeSync(1);
+	console.log('Opening door');
+	lock_relais.digitalWrite(0);
 	setTimeout(() => {
-		console.log('Turning of relais again');
-		lock_relais.writeSync(0);
+		console.log('Turning of door relais again');
+		lock_relais.digitalWrite(1);
 	}, duration);
-
-	lock_relais.unexport();
-
-	// failsafe, if process gets killed before the timeout is completed, we unexport the gpio object
-	process.on('SIGINT', () => {
-		console.log('SIGINT received');
-		lock_relais.unexport();
-	});
 }
 
 // Using the API of the node backend to save the event to the database
@@ -38,7 +35,7 @@ export const saveDoorLockEvent = (user?: string) => {
 	);
 
 	saveEventRequest.subscribe((result) => {
-		console.log('And wrote the event down for you');
+		console.log('Wrote a bell event down for you');
 	},
 		(error) => {
 			console.log('Oh no! I think my pen broke :(');
@@ -46,4 +43,4 @@ export const saveDoorLockEvent = (user?: string) => {
 	});
 }
 
-triggerLockRelais();
+

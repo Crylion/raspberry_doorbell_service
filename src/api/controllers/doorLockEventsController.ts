@@ -19,6 +19,7 @@ export const addEvent = (req, res) => {
 		if (!isNullOrUndefined(err)) {
 			res.send(err);
 		} else {
+			console.log('Wrote new lock event: ' + event);
 			res.json(event);
 		}
 	});
