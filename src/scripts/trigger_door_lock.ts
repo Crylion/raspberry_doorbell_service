@@ -9,6 +9,10 @@ const lock_relais = new Gpio(PIN_DOORBELL_RELAIS, {
 	pullUpDown: Gpio.PUD_UP
 });
 
+// initially set the lock to "off", because it sometimes is
+// initialized with the wrong value
+lock_relais.digitalWrite(1);
+
 export const triggerLockRelais = (duration: number = 2000) => {
 	console.log('Opening door');
 	lock_relais.digitalWrite(0);
