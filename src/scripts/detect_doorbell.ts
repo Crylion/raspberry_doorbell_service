@@ -9,12 +9,12 @@ const PIN_DOORBELL_RELAIS: number = 27;
 
 const doorbell_bottom = new Gpio(PIN_DOORBELL_BOTTOM, {
 	mode: Gpio.INPUT,
-	edge: Gpio.RISING_EDGE,
+	edge: Gpio.FALLING_EDGE,
 	pullUpDown: Gpio.PUD_UP
 });
 const doorbell_top = new Gpio(PIN_DOORBELL_TOP, {
 	mode: Gpio.INPUT,
-	edge: Gpio.RISING_EDGE,
+	edge: Gpio.FALLING_EDGE,
 	pullUpDown: Gpio.PUD_UP
 });
 const doorbell_relais = new Gpio(PIN_DOORBELL_RELAIS, {
@@ -24,42 +24,73 @@ const doorbell_relais = new Gpio(PIN_DOORBELL_RELAIS, {
 export const startListening = () => {
 
 	console.log('Gonna listen to doorbell on ' + PIN_DOORBELL_BOTTOM);
+
+	let doorbell_bottom_timeout: NodeJS.Timer;
 	doorbell_bottom.on('interrupt', (value) => {
-		let bellTimeout: boolean = false;
-		if (!isNullOrUndefined(value) && bellTimeout === false) {
-			console.log('Detected a falling flank on ' + PIN_DOORBELL_BOTTOM);
-			doorbell_relais.digitalWrite(1);
-			sendDoorbellNotification();
-			saveDoorbellEvent('Bottom');
+		const firstValueRead = doorbell_bottom.digitalRead();
+		console.log('Detected a ' + value + ' flank on ' + PIN_DOORBELL_BOTTOM + ' current value is ' + firstValueRead);
 
-			bellTimeout = true;
+		// we use a short timeout to verify if the button is actually pressed
+		// right now. used to filter out false positives
+		clearTimeout(doorbell_bottom_timeout);
+		doorbell_bottom_timeout = setTimeout(() => {
 
-			setTimeout(() => {
-				console.log('Turning of relais again');
-				doorbell_relais.digitalWrite(0);
-				bellTimeout = false
-			}, 1000);
-		}
+			// bellCooldown is used to trigger the bell only once every second
+			// at max, avoids spamming
+			let bellCooldown: boolean = false;
+			if (!isNullOrUndefined(value) && value === 0
+				&& bellCooldown === false
+				&& doorbell_bottom.digitalRead() === firstValueRead) {
+
+				console.log('Accepted bell event from ' + PIN_DOORBELL_BOTTOM);
+				doorbell_relais.digitalWrite(1);
+				// sendDoorbellNotification();
+				saveDoorbellEvent('Bottom');
+
+				bellCooldown = true;
+
+				setTimeout(() => {
+					console.log('Turning of relais again');
+					doorbell_relais.digitalWrite(0);
+					bellCooldown = false
+				}, 1000);
+			}
+		}, 50);
 
 	});
 
 	console.log('Gonna listen to doorbell on ' + PIN_DOORBELL_TOP);
+	let doorbell_top_timeout: NodeJS.Timer;
 	doorbell_top.on('interrupt', (value) => {
-		let bellTimeout: boolean = false;
-		if (!isNullOrUndefined(value) && bellTimeout === false) {
-			console.log('Detected a falling flank on ' + PIN_DOORBELL_TOP);
-			doorbell_relais.digitalWrite(1);
-			sendDoorbellNotification();
-			saveDoorbellEvent('Bottom');
+		const firstValueRead = doorbell_top.digitalRead();
+		console.log('Detected a ' + value + ' flank on ' + PIN_DOORBELL_TOP + ' current value is ' + firstValueRead);
 
-			bellTimeout = true;
+		// we use a short timeout to verify if the button is actually pressed
+		// right now. used to filter out false positives
+		clearTimeout(doorbell_top_timeout);
+		doorbell_top_timeout = setTimeout(() => {
 
-			setTimeout(() => {
-				console.log('Turning of relais again');
-				doorbell_relais.digitalWrite(0);
-				bellTimeout = false
-			}, 1000);
-		}
+			// bellCooldown is used to trigger the bell only once every second
+			// at max, avoids spamming
+			let bellCooldown: boolean = false;
+			if (!isNullOrUndefined(value) && value === 0
+				&& bellCooldown === false
+				&& doorbell_top.digitalRead() === firstValueRead) {
+
+				console.log('Accepted bell event from ' + PIN_DOORBELL_TOP);
+				doorbell_relais.digitalWrite(1);
+				// sendDoorbellNotification();
+				saveDoorbellEvent('Bottom');
+
+				bellCooldown = true;
+
+				setTimeout(() => {
+					console.log('Turning of relais again');
+					doorbell_relais.digitalWrite(0);
+					bellCooldown = false
+				}, 1000);
+			}
+		}, 50);
 
 	});
 
