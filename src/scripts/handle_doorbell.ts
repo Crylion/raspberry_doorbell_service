@@ -2,6 +2,7 @@ import axios from 'axios';
 import { Observable } from 'rxjs';
 import { apiKey } from '../api-key';
 import { isNullOrUndefined } from 'util';
+const aplay = require('aplay');
 
 // Sending a push message via OneSignal
 export const sendDoorbellNotification = () => {
@@ -51,5 +52,27 @@ export const saveDoorbellEvent = (id?: string) => {
 		(error) => {
 			console.log('Oh no! I think my pen broke :(');
 			console.log(error.status + ' ' + error.statusText);
-	});
+		});
+}
+
+export const playDoorbellSounds = (id?: string) => {
+	console.log('trying to play a sound for id ' + id);
+	switch (id) {
+		case 'Top':
+			try {
+				new aplay().play('./sounds/1.wav');
+			} catch (error) {
+				console.log('Error while playing sound');
+			}
+			break;
+		case 'Bottom':
+			try {
+				new aplay().play('./sounds/2.wav');
+			} catch (error) {
+				console.log('Error while playing sound');
+			}
+			break;
+		default:
+			break;
+	}
 }
