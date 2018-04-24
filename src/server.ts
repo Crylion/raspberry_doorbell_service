@@ -8,6 +8,8 @@ import { connect } from 'mongoose';
 import * as bodyParser from 'body-parser';
 import * as cors from 'cors';
 
+const packageInfo = require('../package.json');
+
 const app = express();
 const port = process.env.PORT || 2342;
 
@@ -28,6 +30,12 @@ doorBellEventsRoutes(app);
 doorLockRoutes(app);
 doorLockEventsRoutes(app);
 allEventsRoutes(app);
+
+app.route('/ping').get((req, res) => {
+	res.send({
+		version: packageInfo.version
+	});
+});
 
 // middleware for reacting to a 404 situation
 app.use(function (req, res, next) {
