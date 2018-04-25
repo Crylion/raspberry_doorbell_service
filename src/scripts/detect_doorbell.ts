@@ -44,7 +44,7 @@ export const startListening = () => {
 
 				console.log('Accepted bell event from ' + PIN_DOORBELL_BOTTOM);
 				doorbell_relais.digitalWrite(1);
-				// sendDoorbellNotification();
+				sendDoorbellNotification('Bottom');
 				saveDoorbellEvent('Bottom');
 				playDoorbellSounds('Bottom');
 
@@ -80,7 +80,7 @@ export const startListening = () => {
 
 				console.log('Accepted bell event from ' + PIN_DOORBELL_TOP);
 				doorbell_relais.digitalWrite(1);
-				// sendDoorbellNotification();
+				sendDoorbellNotification('Top');
 				saveDoorbellEvent('Top');
 				playDoorbellSounds('Top');
 

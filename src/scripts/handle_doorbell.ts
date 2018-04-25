@@ -5,7 +5,7 @@ import { isNullOrUndefined } from 'util';
 const aplay = require('aplay');
 
 // Sending a push message via OneSignal
-export const sendDoorbellNotification = () => {
+export const sendDoorbellNotification = (bellId: string) => {
 	const pushRequest: Observable<any> = Observable.fromPromise(
 		axios({
 			method: 'post',
@@ -13,7 +13,7 @@ export const sendDoorbellNotification = () => {
 			data: {
 				'app_id': '45ac3327-f972-4067-85d0-ec8ac1cfbdb4',
 				'template_id': 'e5de7e99-06b4-4ddf-8e87-bb36c4ed80b1',
-				'included_segments': ['All']
+				'included_segments': bellId ? [bellId] : ['Bottom', 'Top']
 			},
 			headers: {
 				'Content-Type': 'application/json',
@@ -60,14 +60,14 @@ export const playDoorbellSounds = (id?: string) => {
 	switch (id) {
 		case 'Top':
 			try {
-				new aplay().play('./sounds/1.wav');
+				new aplay().play('/home/pi/Documents/Workspace/doorbell_service/sounds/1.wav');
 			} catch (error) {
 				console.log('Error while playing sound');
 			}
 			break;
 		case 'Bottom':
 			try {
-				new aplay().play('./sounds/2.wav');
+				new aplay().play('/home/pi/Documents/Workspace/doorbell_service/sounds/2.wav');
 			} catch (error) {
 				console.log('Error while playing sound');
 			}
