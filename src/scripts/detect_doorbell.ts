@@ -5,21 +5,25 @@ import { sendDoorbellNotification, saveDoorbellEvent, playDoorbellSounds } from 
 
 const PIN_DOORBELL_BOTTOM: number = 16;
 const PIN_DOORBELL_TOP: number = 12;
-const PIN_DOORBELL_RELAIS: number = 27;
 
 const doorbell_bottom = new Gpio(PIN_DOORBELL_BOTTOM, {
 	mode: Gpio.INPUT,
 	edge: Gpio.FALLING_EDGE,
 	pullUpDown: Gpio.PUD_UP
 });
+// bellCooldown is used to trigger the bell only once every second
+// at max, avoids spamming
+let bellBottomCooldown: boolean = false;
+
 const doorbell_top = new Gpio(PIN_DOORBELL_TOP, {
 	mode: Gpio.INPUT,
 	edge: Gpio.FALLING_EDGE,
 	pullUpDown: Gpio.PUD_UP
 });
-const doorbell_relais = new Gpio(PIN_DOORBELL_RELAIS, {
-	mode: Gpio.OUTPUT
-});
+// bellCooldown is used to trigger the bell only once every second
+// at max, avoids spamming
+let bellTopCooldown: boolean = false;
+
 
 export const startListening = () => {
 
@@ -35,25 +39,20 @@ export const startListening = () => {
 		clearTimeout(doorbell_bottom_timeout);
 		doorbell_bottom_timeout = setTimeout(() => {
 
-			// bellCooldown is used to trigger the bell only once every second
-			// at max, avoids spamming
-			let bellCooldown: boolean = false;
 			if (!isNullOrUndefined(value) && value === 0
-				&& bellCooldown === false
+				&& bellBottomCooldown === false
 				&& doorbell_bottom.digitalRead() === firstValueRead) {
 
+				bellBottomCooldown = true;
+
 				console.log('Accepted bell event from ' + PIN_DOORBELL_BOTTOM);
-				doorbell_relais.digitalWrite(1);
 				sendDoorbellNotification('Bottom');
 				saveDoorbellEvent('Bottom');
 				playDoorbellSounds('Bottom');
 
-				bellCooldown = true;
 
 				setTimeout(() => {
-					console.log('Turning of relais again');
-					doorbell_relais.digitalWrite(0);
-					bellCooldown = false
+					bellBottomCooldown = false
 				}, 1000);
 			}
 		}, 50);
@@ -71,25 +70,20 @@ export const startListening = () => {
 		clearTimeout(doorbell_top_timeout);
 		doorbell_top_timeout = setTimeout(() => {
 
-			// bellCooldown is used to trigger the bell only once every second
-			// at max, avoids spamming
-			let bellCooldown: boolean = false;
 			if (!isNullOrUndefined(value) && value === 0
-				&& bellCooldown === false
+				&& bellTopCooldown === false
 				&& doorbell_top.digitalRead() === firstValueRead) {
 
+				bellTopCooldown = true;
 				console.log('Accepted bell event from ' + PIN_DOORBELL_TOP);
-				doorbell_relais.digitalWrite(1);
+
 				sendDoorbellNotification('Top');
 				saveDoorbellEvent('Top');
 				playDoorbellSounds('Top');
 
-				bellCooldown = true;
 
 				setTimeout(() => {
-					console.log('Turning of relais again');
-					doorbell_relais.digitalWrite(0);
-					bellCooldown = false
+					bellTopCooldown = false
 				}, 1000);
 			}
 		}, 50);

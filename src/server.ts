@@ -1,12 +1,11 @@
 import { startListening } from './scripts/detect_doorbell';
-import { doorLockEventsRoutes } from './api/routes/doorLockEventsRoutes';
 import { allEventsRoutes } from './api/routes/allEventsRoutes';
 import { doorLockRoutes } from './api/routes/doorLockRoutes';
-import { doorBellEventsRoutes } from './api/routes/doorBellEventsRoutes';
 import * as express from 'express';
 import { connect } from 'mongoose';
 import * as bodyParser from 'body-parser';
 import * as cors from 'cors';
+import { garageDoorRoutes } from './api/routes/garageDoorRoutes';
 
 const packageInfo = require('../package.json');
 
@@ -26,9 +25,8 @@ app.use(bodyParser.json());
 app.use(cors({ credentials: true, origin: true}));
 
 // registering the routes by passing the app into our function
-doorBellEventsRoutes(app);
+garageDoorRoutes(app);
 doorLockRoutes(app);
-doorLockEventsRoutes(app);
 allEventsRoutes(app);
 
 app.route('/ping').get((req, res) => {

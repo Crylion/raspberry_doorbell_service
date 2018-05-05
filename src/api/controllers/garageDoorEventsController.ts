@@ -1,9 +1,9 @@
 import { model } from 'mongoose';
 import { isNullOrUndefined } from 'util';
-import { DoorLockEventModel } from '../models/doorLockEventsModel';
+import { GarageDoorEventModel } from '../models/garageDoorEventsModel';
 
 export const listAllEvents = (req, res) => {
-	DoorLockEventModel.find({}).lean().exec((err, events) => {
+	GarageDoorEventModel.find({}).lean().exec((err, events) => {
 		if (!isNullOrUndefined(err)) {
 			res.send(err);
 		} else {
@@ -13,19 +13,19 @@ export const listAllEvents = (req, res) => {
 }
 
 export const addEvent = (req, res) => {
-	var new_event = new DoorLockEventModel(req.body);
+	var new_event = new GarageDoorEventModel(req.body);
 	new_event.save((err, event) => {
 		if (!isNullOrUndefined(err)) {
 			res.send(err);
 		} else {
-			console.log('Wrote new lock event: ' + event);
+			console.log('Wrote new garage door event: ' + event);
 			res.json(event);
 		}
 	});
 }
 
 export const removeAllEvents = (req, res) => {
-	DoorLockEventModel.deleteMany({}, (err) => {
+	GarageDoorEventModel.deleteMany({}, (err) => {
 		if (!isNullOrUndefined(err)) {
 			res.send(err);
 		} else {
