@@ -1,4 +1,4 @@
-import { Observable } from 'rxjs/Rx';
+import { Observable } from 'rxjs';
 import { Gpio } from 'pigpio';
 import axios from 'axios';
 import { isNullOrUndefined } from 'util';

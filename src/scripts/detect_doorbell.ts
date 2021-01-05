@@ -1,7 +1,7 @@
-import { Observable } from 'rxjs/Rx';
 import { isNullOrUndefined } from 'util';
 import { Gpio } from 'pigpio';
-import { sendDoorbellNotification, saveDoorbellEvent, playDoorbellSounds } from './handle_doorbell';
+import { sendDoorbellNotification, saveDoorbellEvent, ringPhysicalBell } from './handle_doorbell';
+import { triggerPhysicalBellOne, triggerPhysicalBellTwo } from './trigger_physical_bell';
 
 const PIN_DOORBELL_BOTTOM: number = 16;
 const PIN_DOORBELL_TOP: number = 12;
@@ -47,9 +47,9 @@ export const startListening = () => {
 
 				console.log('Accepted bell event from ' + PIN_DOORBELL_BOTTOM);
 				sendDoorbellNotification('Bottom');
-				saveDoorbellEvent('Bottom');
-				playDoorbellSounds('Bottom');
-
+				// saveDoorbellEvent('Bottom');
+				// playDoorbellSounds('Bottom');
+				ringPhysicalBell('Bottom');
 
 				setTimeout(() => {
 					bellBottomCooldown = false
@@ -78,9 +78,9 @@ export const startListening = () => {
 				console.log('Accepted bell event from ' + PIN_DOORBELL_TOP);
 
 				sendDoorbellNotification('Top');
-				saveDoorbellEvent('Top');
-				playDoorbellSounds('Top');
-
+				// saveDoorbellEvent('Top');
+				// playDoorbellSounds('Top');
+				ringPhysicalBell('Top');
 
 				setTimeout(() => {
 					bellTopCooldown = false

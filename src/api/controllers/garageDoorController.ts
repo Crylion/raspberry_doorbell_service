@@ -3,5 +3,5 @@ import { addEvent } from './garageDoorEventsController';
 
 export const openGarageDoor = (req, res) => {
 	triggerGarageDoorRelais();
-	addEvent(req, res);
+	// addEvent(req, res);
 }

@@ -2,7 +2,8 @@ import axios from 'axios';
 import { Observable } from 'rxjs';
 import { apiKey } from '../api-key';
 import { isNullOrUndefined } from 'util';
-const aplay = require('aplay');
+import { DoorbellSettingsModel } from '../api/models/doorBellSettings';
+import { triggerPhysicalBellOne, triggerPhysicalBellTwo } from './trigger_physical_bell';
 
 // Sending a push message via OneSignal
 export const sendDoorbellNotification = (bellId: string) => {
@@ -55,24 +56,17 @@ export const saveDoorbellEvent = (id?: string) => {
 		});
 }
 
-export const playDoorbellSounds = (id?: string) => {
-	console.log('trying to play a sound for id ' + id);
-	switch (id) {
-		case 'Top':
-			try {
-				new aplay().play('/home/pi/Documents/Workspace/doorbell_service/sounds/1.wav');
-			} catch (error) {
-				console.log('Error while playing sound');
+export const ringPhysicalBell = (id: string = 'Bottom') => {
+	DoorbellSettingsModel.findOne({id}).lean().exec((err, setting) => {
+		if (setting === null || setting === undefined || err || setting.muted === false) {
+			switch (id) {
+				case 'Bottom':
+					triggerPhysicalBellOne();
+					break;
+				case 'Top':
+					triggerPhysicalBellTwo();
+					break;
 			}
-			break;
-		case 'Bottom':
-			try {
-				new aplay().play('/home/pi/Documents/Workspace/doorbell_service/sounds/2.wav');
-			} catch (error) {
-				console.log('Error while playing sound');
-			}
-			break;
-		default:
-			break;
-	}
+		}
+	});
 }

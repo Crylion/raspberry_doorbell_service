@@ -1,12 +1,8 @@
-import { Observable } from 'rxjs/Rx';
 import { isNullOrUndefined } from 'util';
 import { Gpio } from 'pigpio';
-import { sendDoorbellNotification, saveDoorbellEvent } from './handle_doorbell';
 
 const PIN_DOORBELL_BOTTOM: number = 16;
 const PIN_DOORBELL_TOP: number = 12;
-const PIN_DOORBELL_RELAIS: number = 27;
-const PIN_LOCK_RELAIS: number = 17;
 
 const doorbell_bottom = new Gpio(PIN_DOORBELL_BOTTOM, {
 	mode: Gpio.INPUT,
